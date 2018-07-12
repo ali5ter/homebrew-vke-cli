@@ -1,2 +1,2 @@
-# homebrew-vke-cli
-macOS Homebrew formula to install VMware Kubernetes Engine (VKE) CLI
+# VMware Kubernetes Engine CLI Homebrew Tap
+This is a [Homebrew][brew] tap for formulae installing the VKE CLI on macOS.
