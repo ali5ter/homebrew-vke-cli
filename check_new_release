@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# @file check_new_release
+# Test last modified HTTP header of CLI URL so tap version and sha can
+# be updated
+# @author Alister Lewis-Bowen <alister@lewis-bowen.org>
+
+[[ -n $DEBUG ]] && set -x
+set -eou pipefail
+
+SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
+LAST_RELEASE_FILE="$SCRIPT_PATH/.last_release"
+CLI_URL='https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/mac/vke'
+
+get_last_modified() { 
+    curl -s -I "$CLI_URL" | grep Last-Modified | sed 's/Last-Modified: //'
+}
+
+if [[ ! -e "$LAST_RELEASE_FILE" ]]; then
+    get_last_modified > $LAST_RELEASE_FILE
+    exit 0
+fi
+
+LAST_RELEASE=$(cat "$LAST_RELEASE_FILE")
+TAP_SCRIPT="$SCRIPT_PATH/vke-cli.rb"
+SHA256=$(cat "$TAP_SCRIPT" | grep sha256 | cut -d'"' -f 2)
+VERSION=$(cat "$TAP_SCRIPT" | grep version | cut -d'"' -f 2)
+
+if curl -s -I --header "If-Modified-Since: $LAST_RELEASE" "$CLI_URL" | grep -q 304; then
+    echo "No update since $LAST_RELEASE"
+else
+    curl -s "$CLI_URL" -o /tmp/vke && chmod 755 /tmp/vke
+    SHA256_NEW=$(shasum -a 256 /tmp/vke | cut -d' ' -f1)
+    BUILD=$(/tmp/vke --version | cut -d'(' -f2 | cut -d')' -f1 | cut -d':' -f2 | sed 's/ //')
+    VERSION_NEW="0.9.0.$BUILD"
+    rm -fR /tmp/vke
+    sed -i '' "s/$SHA256/$SHA256_NEW/g" "$TAP_SCRIPT"
+    sed -i '' "s/$VERSION/$VERSION_NEW/g" "$TAP_SCRIPT"
+    get_last_modified > $LAST_RELEASE_FILE
+    echo "New update: Build $BUILD (checksum: $SHA256)"
+fi
