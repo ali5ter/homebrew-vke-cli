@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # @file check_new_release
-# Test last modified HTTP header of CLI URL so tap version and sha can
-# be updated
+# Update tap script if there is a new VKE CLI release
 # @author Alister Lewis-Bowen <alister@lewis-bowen.org>
 
 [[ -n $DEBUG ]] && set -x

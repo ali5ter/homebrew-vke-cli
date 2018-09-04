@@ -8,10 +8,9 @@ Assuming you have Homebrew installed, you need to tap this homebrew repo and the
     brew install vke-cli
     
 ## Updating
-Using the Homebrew update and reinstall commands should pull updates to this tap. You could, for extra certainty, remove the cached download:
+Using the Homebrew update and reinstall commands should pull updates to this tap.
 
     brew update
-    rm -fR ~/Library/Caches/Homebrew/vke-cli-*.com
     brew reinstall vke-cli
     
 ## Other VKE utilities
