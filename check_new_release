@@ -40,5 +40,5 @@ else
     sed -i '' "s/$SHA256/$SHA256_NEW/g" "$TAP_SCRIPT"
     sed -i '' "s/$VERSION/$VERSION_NEW/g" "$TAP_SCRIPT"
     get_last_modified > "$LAST_RELEASE_FILE"
-    echo "New update: Build $BUILD (checksum: $SHA256)"
+    echo "New update: Build $BUILD (checksum: $SHA256_NEW)"
 fi
