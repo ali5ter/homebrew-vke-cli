@@ -27,7 +27,7 @@ fi
 LAST_RELEASE=$(cat "$LAST_RELEASE_FILE")
 TAP_SCRIPT="$SCRIPT_PATH/vke-cli.rb"
 SHA256=$(cat "$TAP_SCRIPT" | grep sha256 | cut -d'"' -f 2)
-VERSION=$(cat "$TAP_SCRIPT" | grep version | cut -d'"' -f 2)
+VERSION=$(cat "$TAP_SCRIPT" | grep version\  | cut -d'"' -f 2)
 
 if curl -s -I --header "If-Modified-Since: $LAST_RELEASE" "$CLI_URL" | grep -q 304; then
     echo "No update since $LAST_RELEASE"
