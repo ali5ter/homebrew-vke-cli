@@ -5,7 +5,7 @@
 
 [[ -n $DEBUG ]] && set -x
 set -eou pipefail
-
+set -x
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 LAST_RELEASE_FILE="$SCRIPT_PATH/.last_release"
 CLI_URL='https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/mac/vke'
