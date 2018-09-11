@@ -17,8 +17,8 @@ jobs:
       - run:
           name: Update tap if new VKE CLI available
           command: |
-          echo 'Mon, 10 Sep 2018 22:37:39 GMT' > .last_release
-          ./check_new_release
+            echo 'Mon, 10 Sep 2018 22:37:39 GMT' > .last_release
+            ./check_new_release
 
 workflows:
   version: 2
