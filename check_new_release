@@ -3,17 +3,19 @@
 # Update tap script if there is a new VKE CLI release
 # @author Alister Lewis-Bowen <alister@lewis-bowen.org>
 
-if [[ "$OSTYPE" != "darwin"* ]]; then
-    echo "This will only run on macOS"
-    exit 1
-fi
-
 [[ -n $DEBUG ]] && set -x
 set -eou pipefail
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 LAST_RELEASE_FILE="$SCRIPT_PATH/.last_release"
 CLI_URL='https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/mac/vke'
+CMD_SHA256=''
+
+case "$OSTYPE" in
+    darwin*)  CMD_SHA256='shasum -a 256';;
+    linux*)   CMD_SHA256='sha256sum';;
+    *)        return 1;;
+esac
 
 get_last_modified() { 
     curl -s -I "$CLI_URL" | grep Last-Modified | sed 's/Last-Modified: //'
@@ -33,7 +35,7 @@ if curl -s -I --header "If-Modified-Since: $LAST_RELEASE" "$CLI_URL" | grep -q 3
     echo "No update since $LAST_RELEASE"
 else
     curl -s "$CLI_URL" -o /tmp/vke && chmod 755 /tmp/vke
-    SHA256_NEW=$(shasum -a 256 /tmp/vke | cut -d' ' -f1)
+    SHA256_NEW=$("$CMD_SHA256" /tmp/vke | cut -d' ' -f1)
     BUILD=$(/tmp/vke --version | cut -d'(' -f2 | cut -d')' -f1 | cut -d':' -f2 | sed 's/ //')
     VERSION_NEW="0.9.0.$BUILD"
     rm -fR /tmp/vke
