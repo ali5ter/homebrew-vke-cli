@@ -17,8 +17,12 @@ jobs:
       - run:
           name: Update tap if new VKE CLI available
           command: |
-            echo 'Mon, 10 Sep 2018 22:37:39 GMT' > .last_release
+            set -x
+            echo "$VKE_CLI_LAST_RELEASE" > .last_release
+            #download .last_release asset if it's there
             ./check_new_release
+      - store_artifacts:
+          path: /.last_release
 
 workflows:
   version: 2
