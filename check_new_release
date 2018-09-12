@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # @file check_new_release
-# Update tap script if there is a new VKE CLI release
+# Update tap script if there is a new VKE CLI build
 # @author Alister Lewis-Bowen <alister@lewis-bowen.org>
 
 [[ -n $DEBUG ]] && set -x
 set -eou pipefail
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
-LAST_RELEASE_FILE="$SCRIPT_PATH/.last_release"
+LAST_BUILD_FILE="$SCRIPT_PATH/.last_build_date"
 CLI_URL=''
 CMD_SHA256=''
 
@@ -27,18 +27,18 @@ get_last_modified() {
     curl -s -I "$CLI_URL" | grep Last-Modified | sed 's/Last-Modified: //'
 }
 
-if [[ ! -e "$LAST_RELEASE_FILE" ]]; then
-    get_last_modified > "$LAST_RELEASE_FILE"
+if [[ ! -e "$LAST_BUILD_FILE" ]]; then
+    get_last_modified > "$LAST_BUILD_FILE"
     exit 0
 fi
 
-LAST_RELEASE=$(cat "$LAST_RELEASE_FILE")
+LAST_BUILD_DATE=$(cat "$LAST_BUILD_FILE")
 TAP_SCRIPT="$SCRIPT_PATH/vke-cli.rb"
 SHA256=$(grep sha256 "$TAP_SCRIPT" | cut -d'"' -f 2)
 VERSION=$(grep version\  "$TAP_SCRIPT"  | cut -d'"' -f 2)
 
-if curl -s -I --header "If-Modified-Since: $LAST_RELEASE" "$CLI_URL" | grep -q 304; then
-    echo "No update since $LAST_RELEASE"
+if curl -s -I --header "If-Modified-Since: $LAST_BUILD_DATE" "$CLI_URL" | grep -q 304; then
+    echo "No build since $LAST_BUILD_DATE"
 else
     curl -s "$CLI_URL" -o /tmp/vke && chmod 755 /tmp/vke
     SHA256_NEW=$($CMD_SHA256 /tmp/vke | cut -d' ' -f1)
@@ -47,6 +47,6 @@ else
     rm -fR /tmp/vke
     sed -i.tmp -e "s/$SHA256/$SHA256_NEW/g" -- "$TAP_SCRIPT" && rm "${TAP_SCRIPT}.tmp"
     sed -i.tmp -e "s/$VERSION/$VERSION_NEW/g" -- "$TAP_SCRIPT" && rm "${TAP_SCRIPT}.tmp"
-    get_last_modified > "$LAST_RELEASE_FILE"
-    echo "New update: Build $BUILD (checksum: $SHA256_NEW)"
+    get_last_modified > "$LAST_BUILD_FILE"
+    echo "New build $BUILD (checksum: $SHA256_NEW)"
 fi

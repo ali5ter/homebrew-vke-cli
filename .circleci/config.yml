@@ -17,20 +17,30 @@ jobs:
       - run:
           name: Update tap if new VKE CLI available
           command: |
-            set -x
-            API_BASE='https://circleci.com/api/v1.1'
-            API_PROJECT="$API_BASE/project/github/ali5ter/homebrew-vke-cli"
-            LAST_BUILD=$((CIRCLE_BUILD_NUM - 2))
-            API_ARTIFACTS="$API_PROJECT/$LAST_BUILD/artifacts"
+
+            FILE='.last_build_date'
+            BUILD=$((CIRCLE_BUILD_NUM - 2))
+            API_BASE='https://circleci.com/api/v1.1/project/github/ali5ter/homebrew-vke-cli'
+            API_ARTIFACTS="$API_PROJECT/$BUILD/artifacts"
+
+            echo "Fetching $FILE from build $BUILD"
             ARTIFACTS=$(curl -s -u $CIRCLE_TOKEN: "$API_ARTIFACTS" | grep url || echo '')
             if [[ ! -z "$ARTIFACTS" ]]; then
-              LAST_RELEASE=$(grep .last_release "$ARTIFACTS" || echo '')
+              LAST_RELEASE=$(grep "$FILE" "$ARTIFACTS" || echo '')
               if [[ ! -z "$LAST_RELEASE" ]]; then
                 URL_LAST_RELEASE=$(echo "$LAST_RELEASE" | cut -d'"' -f4)
-                curl -s "$URL_LAST_RELEASE" -o .last_release
+                curl -s "$URL_LAST_RELEASE" -o "$FILE"
+                echo "Found $FILE containing date $(cat $FILE)"
+              else
+                echo "No artifacts named $FILE found in build $BUILD"
               fi
+            else
+              echo "No artifacts found in build $BUILD"
             fi
+
+            echo "Check for new VKE CLI build and update brew tap"
             ./check_new_release
+
       - store_artifacts:
           path: .last_release
 
