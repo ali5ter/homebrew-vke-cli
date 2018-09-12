@@ -20,7 +20,7 @@ jobs:
             set -x
             API_BASE='https://circleci.com/api/v1.1'
             API_PROJECT="$API_BASE/project/github/ali5ter/homebrew-vke-cli"
-            LAST_BUILD=$(CIRCLE_BUILD_NUM - 2)
+            LAST_BUILD=$((CIRCLE_BUILD_NUM - 2))
             API_ARTIFACTS="$API_PROJECT/$LAST_BUILD/artifacts"
             URL_LAST_RELEASE=$(curl -s -u $CIRCLE_TOKEN: "$API_ARTIFACTS" | grep url | grep .last_release | cut -d'"' -f4)
             curl -s "$URL_LAST_RELEASE" -o .last_release
