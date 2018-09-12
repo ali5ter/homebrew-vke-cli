@@ -22,7 +22,7 @@ jobs:
             #download .last_release asset if it's there
             ./check_new_release
       - store_artifacts:
-          path: /.last_release
+          path: .last_release
 
 workflows:
   version: 2
