@@ -10,17 +10,14 @@ SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 LAST_RELEASE_FILE="$SCRIPT_PATH/.last_release"
 CLI_URL=''
 CMD_SHA256=''
-CMD_SED=''
 
 case "$OSTYPE" in
     darwin*)  
         CMD_SHA256='shasum -a 256'
-        CMD_SED="sed -i \\'\\'"
         CLI_URL='https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/mac/vke'
         ;;
     linux*)   
         CMD_SHA256='sha256sum'
-        CMD_SED='sed'
         CLI_URL='https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/linux64/vke'
         ;;
     *)  return 1;;
@@ -48,8 +45,8 @@ else
     BUILD=$(/tmp/vke --version | cut -d'(' -f2 | cut -d')' -f1 | cut -d':' -f2 | sed 's/ //')
     VERSION_NEW="0.9.0.$BUILD"
     rm -fR /tmp/vke
-    $CMD_SED "s/$SHA256/$SHA256_NEW/g" "$TAP_SCRIPT"
-    $CMD_SED "s/$VERSION/$VERSION_NEW/g" "$TAP_SCRIPT"
+    sed -i.tmp -e "s/$SHA256/$SHA256_NEW/g" -- "$TAP_SCRIPT" && rm "${TAP_SCRIPT}.tmp"
+    sed -i.tmp -e "s/$VERSION/$VERSION_NEW/g" -- "$TAP_SCRIPT" && rm "${TAP_SCRIPT}.tmp"
     get_last_modified > "$LAST_RELEASE_FILE"
     echo "New update: Build $BUILD (checksum: $SHA256_NEW)"
 fi
