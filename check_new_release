@@ -10,14 +10,17 @@ SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 LAST_RELEASE_FILE="$SCRIPT_PATH/.last_release"
 CLI_URL=''
 CMD_SHA256=''
+CMD_SED=''
 
 case "$OSTYPE" in
     darwin*)  
         CMD_SHA256='shasum -a 256'
+        CMD_SED="sed -i \\'\\'"
         CLI_URL='https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/mac/vke'
         ;;
     linux*)   
         CMD_SHA256='sha256sum'
+        CMD_SED='sed'
         CLI_URL='https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/linux64/vke'
         ;;
     *)  return 1;;
