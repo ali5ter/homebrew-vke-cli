@@ -35,7 +35,7 @@ if curl -s -I --header "If-Modified-Since: $LAST_RELEASE" "$CLI_URL" | grep -q 3
     echo "No update since $LAST_RELEASE"
 else
     curl -s "$CLI_URL" -o /tmp/vke && chmod 755 /tmp/vke
-    SHA256_NEW=$("$CMD_SHA256" /tmp/vke | cut -d' ' -f1)
+    SHA256_NEW=$($CMD_SHA256 /tmp/vke | cut -d' ' -f1)
     BUILD=$(/tmp/vke --version | cut -d'(' -f2 | cut -d')' -f1 | cut -d':' -f2 | sed 's/ //')
     VERSION_NEW="0.9.0.$BUILD"
     rm -fR /tmp/vke
