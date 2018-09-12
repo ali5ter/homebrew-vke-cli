@@ -18,6 +18,7 @@ jobs:
           name: Update tap if new VKE CLI available
           command: |
             set -x
+            echo $CIRCLE_BUILD_NUM
             API_BASE='https://circleci.com/api/v1.1'
             API_PROJECT="$API_BASE/project/github/ali5ter/homebrew-vke-cli"
             LAST_BUILD=$((CIRCLE_BUILD_NUM - 2))
