@@ -18,9 +18,7 @@ jobs:
           name: Update tap if new VKE CLI available
           command: |
             set -x
-            echo "$VKE_CLI_LAST_RELEASE" > .last_release
-            #download .last_release asset if it's there
-            curl -o https://33-140724139-gh.circle-artifacts.com/0/root/project/.last_release
+            curl https://33-140724139-gh.circle-artifacts.com/0/root/project/.last_release -o .last_release
             ./check_new_release
       - store_artifacts:
           path: .last_release
