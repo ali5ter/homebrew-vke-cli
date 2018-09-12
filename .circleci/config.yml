@@ -18,13 +18,18 @@ jobs:
           name: Update tap if new VKE CLI available
           command: |
             set -x
-            echo $CIRCLE_BUILD_NUM
             API_BASE='https://circleci.com/api/v1.1'
             API_PROJECT="$API_BASE/project/github/ali5ter/homebrew-vke-cli"
             LAST_BUILD=$((CIRCLE_BUILD_NUM - 2))
             API_ARTIFACTS="$API_PROJECT/$LAST_BUILD/artifacts"
-            URL_LAST_RELEASE=$(curl -s -u $CIRCLE_TOKEN: "$API_ARTIFACTS" | grep url | grep .last_release | cut -d'"' -f4)
-            curl -s "$URL_LAST_RELEASE" -o .last_release
+            ARTIFACTS=$(curl -s -u $CIRCLE_TOKEN: "$API_ARTIFACTS" | grep url || echo '')
+            if [[ ! -z "$ARTIFACTS" ]]; then
+              LAST_RELEASE=$(grep .last_release "$ARTIFACTS" || echo '')
+              if [[ ! -z "$LAST_RELEASE" ]]; then
+                URL_LAST_RELEASE=$(echo "$LAST_RELEASE" | cut -d'"' -f4)
+                curl -s "$URL_LAST_RELEASE" -o .last_release
+              fi
+            fi
             ./check_new_release
       - store_artifacts:
           path: .last_release
