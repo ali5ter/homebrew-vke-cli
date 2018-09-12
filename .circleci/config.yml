@@ -42,7 +42,7 @@ jobs:
             ./check_new_release
 
       - store_artifacts:
-          path: .last_release
+          path: .last_build_date
 
 workflows:
   version: 2
