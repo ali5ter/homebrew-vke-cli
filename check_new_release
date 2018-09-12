@@ -48,8 +48,8 @@ else
     BUILD=$(/tmp/vke --version | cut -d'(' -f2 | cut -d')' -f1 | cut -d':' -f2 | sed 's/ //')
     VERSION_NEW="0.9.0.$BUILD"
     rm -fR /tmp/vke
-    sed -i '' "s/$SHA256/$SHA256_NEW/g" "$TAP_SCRIPT"
-    sed -i '' "s/$VERSION/$VERSION_NEW/g" "$TAP_SCRIPT"
+    $CMD_SED "s/$SHA256/$SHA256_NEW/g" "$TAP_SCRIPT"
+    $CMD_SED "s/$VERSION/$VERSION_NEW/g" "$TAP_SCRIPT"
     get_last_modified > "$LAST_RELEASE_FILE"
     echo "New update: Build $BUILD (checksum: $SHA256_NEW)"
 fi
