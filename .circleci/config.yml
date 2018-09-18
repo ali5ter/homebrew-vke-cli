@@ -32,10 +32,10 @@ jobs:
                 curl -s "$URL_LAST_RELEASE" -o "$FILE"
                 echo "Found $FILE containing date $(cat $FILE)"
               else
-                echo "No artifacts named $FILE found in build $BUILD"
+                echo "  No artifacts named $FILE found in build $BUILD"
               fi
             else
-              echo "No artifacts found in build $BUILD"
+              echo "  No artifacts found in build $BUILD"
             fi
 
             echo "Check for new VKE CLI build and update brew tap"
