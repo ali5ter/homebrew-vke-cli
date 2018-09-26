@@ -19,6 +19,7 @@ jobs:
           command: |
 
             FILE='.last_build_date'
+            ## TODO: Need a reliable way to determin the last build
             BUILD=$((CIRCLE_BUILD_NUM - 2))
             API_BASE='https://circleci.com/api/v1.1/project/github/ali5ter/homebrew-vke-cli'
             API_ARTIFACTS="$API_PROJECT/$BUILD/artifacts"
