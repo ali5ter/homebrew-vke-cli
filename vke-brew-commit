@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# @file vke-brew-commit
+# Update tap script if there is a new VKE CLI build and commit it
+# @author Alister Lewis-Bowen <alister@lewis-bowen.org>
+
+[[ -n $DEBUG ]] && set -x
+set -eou pipefail
+
+SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
+
+pushd "$SCRIPT_PATH" >/dev/null || exit 1
+./check_new_release
+if [[ $(git status -s | grep -c 'M vke-cli.rb') == 1 ]]; then
+    git add vke-cli.rb && \
+    git commit -m'Update tap for new build' && \
+    git push
+fi
+popd >/dev/null || exit 1
