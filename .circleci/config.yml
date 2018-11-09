@@ -6,47 +6,37 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check Scripts
+          name: Check scripts
           command: |
             shellcheck --external-sources check_new_release
+            shellcheck --external-sources vke_brew_commit
   build-job:
     docker:
       - image: circleci/ubuntu-server:latest
     steps:
-      - checkout
+      - add_ssh_keys:
+        fingerprints:
+          - "01:fb:47:4a:a7:b4:cb:1b:c7:41:34:08:4d:d8:67:3a"
       - run:
-          name: Update tap if new VKE CLI available
+          name: Update completion script based on this commit
           command: |
 
-            FILE='.last_build_date'
-            ## TODO: Need a reliable way to determin the last build
-            BUILD=$((CIRCLE_BUILD_NUM - 2))
-            API_BASE='https://circleci.com/api/v1.1/project/github/ali5ter/homebrew-vke-cli'
-            API_ARTIFACTS="$API_PROJECT/$BUILD/artifacts"
+            git clone git@github.com:ali5ter/vke-completion.git
 
-            echo "Fetching $FILE from build $BUILD"
-            ARTIFACTS=$(curl -s -u $CIRCLE_TOKEN: "$API_ARTIFACTS" | grep url || echo '')
-            if [[ ! -z "$ARTIFACTS" ]]; then
-              LAST_RELEASE=$(grep "$FILE" "$ARTIFACTS" || echo '')
-              if [[ ! -z "$LAST_RELEASE" ]]; then
-                URL_LAST_RELEASE=$(echo "$LAST_RELEASE" | cut -d'"' -f4)
-                curl -s "$URL_LAST_RELEASE" -o "$FILE"
-                echo "Found $FILE containing date $(cat $FILE)"
-              else
-                echo "  No artifacts named $FILE found in build $BUILD"
-              fi
-            else
-              echo "  No artifacts found in build $BUILD"
+            popd vke-completion >/dev/null || exit 1
+
+            ./create_completion
+
+            if [[ $(git status -s | grep -c 'M vke_bash_completion.sh') == 1 ]]; then
+                git add vke_bash_completion.sh && \
+                git commit -m'Update completion for new CLI build' && \
+                git push
             fi
 
-            echo "Check for new VKE CLI build and update brew tap"
-            ./check_new_release
-
-      - store_artifacts:
-          path: .last_build_date
+            popd >/dev/null || exit 1
 
 workflows:
-  version: 2
+  version: 3
   workflow:
     jobs:
       - shellcheck
