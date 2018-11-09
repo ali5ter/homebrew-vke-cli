@@ -21,8 +21,9 @@ jobs:
       - run:
           name: Update completion script based on this commit
           command: |
-          
-            apk -U add git openssh
+
+            apt update
+            apt install git
 
             git clone git@github.com:ali5ter/vke-completion.git
 
