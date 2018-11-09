@@ -17,9 +17,12 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "01:fb:47:4a:a7:b4:cb:1b:c7:41:34:08:4d:d8:67:3a"
+            - "70:c3:03:6b:0e:e0:31:cc:a1:dd:e5:3c:de:24:8c:05"
       - run:
           name: Update completion script based on this commit
           command: |
+          
+            apk -U add git openssh
 
             git clone git@github.com:ali5ter/vke-completion.git
 
