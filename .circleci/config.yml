@@ -15,8 +15,8 @@ jobs:
       - image: circleci/ubuntu-server:latest
     steps:
       - add_ssh_keys:
-        fingerprints:
-          - "01:fb:47:4a:a7:b4:cb:1b:c7:41:34:08:4d:d8:67:3a"
+          fingerprints:
+            - "01:fb:47:4a:a7:b4:cb:1b:c7:41:34:08:4d:d8:67:3a"
       - run:
           name: Update completion script based on this commit
           command: |
