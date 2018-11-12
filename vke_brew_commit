@@ -9,6 +9,7 @@ set -eou pipefail
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 
 pushd "$SCRIPT_PATH" >/dev/null || exit 1
+git pull
 ./check_new_release
 if [[ $(git status -s | grep -c 'M vke-cli.rb') == 1 ]]; then
     git add vke-cli.rb && \
