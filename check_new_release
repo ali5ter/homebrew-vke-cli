@@ -14,11 +14,11 @@ CMD_SHA256=''
 case "$OSTYPE" in
     darwin*)  
         CMD_SHA256='shasum -a 256'
-        CLI_URL='https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/mac/vke'
+        CLI_URL="$(curl -s https://api.vke.cloud.vmware.com/v1/cli | jq -r .latest.urls.mac)"
         ;;
-    linux*)   
+    linux*)
         CMD_SHA256='sha256sum'
-        CLI_URL='https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/linux64/vke'
+        CLI_URL="$(curl -s https://api.vke.cloud.vmware.com/v1/cli | jq -r .latest.urls.linux64)"
         ;;
     *)  return 1;;
 esac
