@@ -2,8 +2,8 @@ class VkeCli < Formula
   desc "Command-line tool for VMware Kuberentes Engine"
   homepage "https://cloud.vmware.com/vmware-kubernetes-engine"
   url "https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/mac/vke"
-  version "0.9.0.90-6411ac5"
-  sha256 "1ebe10ed67ff6edaae5e584176be652bf19481f7f4d5ac0db7046ff613319723"
+  version "0.9.0.93-5269049"
+  sha256 "af82aaee44bb9420436c53243f2228cd3c8c39fb6b032f147b613c01409b9602"
   version_scheme 1
 
   bottle :unneeded
