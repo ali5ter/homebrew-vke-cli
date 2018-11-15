@@ -19,7 +19,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - build-date
+            - build-date-
       - run:
           name: Check for new build and update tap
           command: |
@@ -33,7 +33,7 @@ jobs:
                 git push -q https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/homebrew-vke-cli.git master
             fi
       - save_cache:
-          key: build-date
+          key: build-date-{{ checksum ".last_build_date" }}
           paths:
             .last_build_date
 
