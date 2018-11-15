@@ -11,10 +11,12 @@ jobs:
             shellcheck --external-sources check_new_release
             shellcheck --external-sources vke_brew_commit
   build_completion_script:
-    machine: true
+    docker:
+      - image: circleci/python:2.7
     steps:
       - run:
           name: Clone completion script repo
+          working_directory: ${CIRCLE_WORKING_DIRECTORY}
           command: |
             git clone https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/vke-completion.git
       - deploy:
