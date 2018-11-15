@@ -11,32 +11,26 @@ jobs:
             shellcheck --external-sources check_new_release
             shellcheck --external-sources vke_brew_commit
   build_completion_script:
-    docker:
-      - image: circleci/ubuntu-server:latest
+    machine: true
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "70:c3:03:6b:0e:e0:31:cc:a1:dd:e5:3c:de:24:8c:05"
       - run:
-          name: Install and configure git
+          name: Clone completion script repo
           command: |
-            apt update -y
-            apt install git -y
-            git config --global user.email "alister@lewis-bowen.org"
-            git config --global user.name "Alister Lewis-Bowen"
-      - run:
+            git clone https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/vke-completion.git
+      - deploy:
           name: Create completion script and commit if there are changes
+          working_directory: ~/${CIRCLE_WORKING_DIRECTORY}/vke-completion
           command: |
-            echo '16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48' >> ~/.ssh/known_hosts
-            git clone git@github.com:ali5ter/vke-completion.git
-            popd vke-completion >/dev/null || exit 1
+            git config credential.helper 'cache --timeout=120'
+            git config user.email "alister@lewis-bowen.org"
+            git config user.name "CircleCI deployment job"
             ./create_completion
             if [[ $(git status -s | grep -c 'M vke_bash_completion.sh') == 1 ]]; then
                 git add vke_bash_completion.sh && \
                 git commit -m'Update completion for new CLI build' && \
                 git push
+                git push -q https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/vke-completion.git master
             fi
-            popd >/dev/null || exit 1
 
 workflows:
   version: 2
