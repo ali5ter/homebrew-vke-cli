@@ -22,7 +22,6 @@ jobs:
             - build-date
       - run:
           name: Check for new build and update tap
-          working_directory: ${CIRCLE_WORKING_DIRECTORY}
           command: |
             ./check_new_release
             git config credential.helper 'cache --timeout=120'
@@ -31,7 +30,7 @@ jobs:
             if [[ $(git status -s | grep -c 'M vke-cli.rb') == 1 ]]; then
                 git add vke-cli.rb && \
                 git commit -m'Update tap for new build' && \
-                git push && \
+                git push -q https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/homebrew-vke-cli.git master
             fi
       - save_cache:
           key: build-date
