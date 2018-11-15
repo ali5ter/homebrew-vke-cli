@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  shellcheck:
+  linter:
     docker:
       - image: nlknguyen/alpine-shellcheck:v0.4.6
     steps:
@@ -36,12 +36,15 @@ jobs:
 
 workflows:
   version: 2
-  workflow:
+  commit-workflow:
     jobs:
-      - shellcheck
-      - build_completion_script:
-          requires:
-            - shellcheck
+      - linter
+  schedule-workflow:
+    triggers:
+      - schedule:
+          cron: "0-30 * * * *"
           filters:
             branches:
               only: master
+    jobs:
+      - build_completion_script
