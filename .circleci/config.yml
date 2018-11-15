@@ -1,4 +1,5 @@
 version: 2
+
 jobs:
   linter:
     docker:
@@ -10,29 +11,39 @@ jobs:
           command: |
             shellcheck --external-sources check_new_release
             shellcheck --external-sources vke_brew_commit
+
   update_tap_on_new_build:
     docker:
       - image: circleci/python:2.7
     steps:
       - checkout
+      - restore_cache:
+          keys: 
+            - build-date
       - run:
           name: Check for new build and update tap
-          command: ./check_new_release
-      - deploy:
-          name: Commit tap if changed
+          working_directory: ${CIRCLE_WORKING_DIRECTORY}
           command: |
+            ./check_new_release
             git config credential.helper 'cache --timeout=120'
             git config user.email "alister@lewis-bowen.org"
             git config user.name "CircleCI deployment job"
             if [[ $(git status -s | grep -c 'M vke-cli.rb') == 1 ]]; then
                 git add vke-cli.rb && \
                 git commit -m'Update tap for new build' && \
-                git push
+                git push && \
             fi
+      - save_cache:
+          key: build-date
+          paths:
+            .last_build_date
+
   build_completion_script:
     docker:
       - image: circleci/python:2.7
     steps:
+      - attach_workspace:
+          at: ${CIRCLE_WORKING_DIRECTORY}
       - run:
           name: Clone completion script repo
           working_directory: ${CIRCLE_WORKING_DIRECTORY}
@@ -42,6 +53,7 @@ jobs:
           name: Create completion script and commit if there are changes
           working_directory: ${CIRCLE_WORKING_DIRECTORY}/vke-completion
           command: |
+            if [[ ]]
             git config credential.helper 'cache --timeout=120'
             git config user.email "alister@lewis-bowen.org"
             git config user.name "CircleCI deployment job"
@@ -54,9 +66,11 @@ jobs:
 
 workflows:
   version: 2
+
   commit-workflow:
     jobs:
       - linter
+
   schedule-workflow:
     triggers:
       - schedule:
@@ -65,5 +79,10 @@ workflows:
             branches:
               only: master
     jobs:
-      - update_tap_on_new_build
-      - build_completion_script
+      - linter
+      - update_tap_on_new_build:
+          requires:
+            - linter
+      - build_completion_script:
+          requires:
+            - update_tap_on_new_build
