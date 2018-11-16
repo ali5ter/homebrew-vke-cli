@@ -58,8 +58,7 @@ message() {
 
 if [[ ! -e "$LAST_BUILD_FILE" ]]; then
     get_last_modified > "$LAST_BUILD_FILE"
-    LAST_BUILD_DATE=$(cat "$LAST_BUILD_FILE")
-    message "Storing current build date: $LAST_BUILD_DATE"
+    message "Storing current build date: $(cat "$LAST_BUILD_FILE")"
     exit 0
 fi
 
@@ -83,8 +82,7 @@ else
     sed -i.tmp -e "s/$SHA256/$SHA256_NEW/g" -- "$TAP_SCRIPT" && rm "${TAP_SCRIPT}.tmp"
     sed -i.tmp -e "s/$VERSION/$VERSION_NEW/g" -- "$TAP_SCRIPT" && rm "${TAP_SCRIPT}.tmp"
     get_last_modified > "$LAST_BUILD_FILE"
-    LAST_BUILD_DATE=$(cat "$LAST_BUILD_FILE")
-    message "New build $BUILD created $LAST_BUILD_DATE"
+    message "New build $BUILD created $(cat "$LAST_BUILD_FILE")"
     message "  SHA256: $SHA256 → $SHA256_NEW"
     message "  Version: $VERSION → $VERSION_NEW"
 fi
