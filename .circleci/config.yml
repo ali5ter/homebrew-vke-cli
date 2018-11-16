@@ -10,7 +10,6 @@ jobs:
           name: Check scripts
           command: |
             shellcheck --external-sources check_new_release
-            shellcheck --external-sources vke_brew_commit
 
   update_tap_on_new_build:
     docker:
