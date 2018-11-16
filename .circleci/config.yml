@@ -77,7 +77,7 @@ workflows:
             branches:
               only: master
     jobs:
-      - update_tap_on_new_build:
+      - update_tap_on_new_build
       - build_completion_script:
           requires:
             - update_tap_on_new_build
