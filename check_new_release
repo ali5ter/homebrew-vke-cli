@@ -60,7 +60,7 @@ if [[ ! -e "$LAST_BUILD_FILE" ]]; then
     get_last_modified > "$LAST_BUILD_FILE"
     LAST_BUILD_DATE=$(cat "$LAST_BUILD_FILE")
     message "Storing current build date: $LAST_BUILD_DATE"
-    exit 1
+    exit 0
 fi
 
 # Check for build update before updating tap ---------------------------------
@@ -74,7 +74,6 @@ if curl -s -I --header "If-Modified-Since: $LAST_BUILD_DATE" "$CLI_URL" | grep -
     message "No build since $LAST_BUILD_DATE"
     message "  SHA256: $SHA256"
     message "  Version: $VERSION"
-    exit 1
 else
     curl -s "$CLI_URL" -o /tmp/vke && chmod 755 /tmp/vke
     SHA256_NEW=$($CMD_SHA256 /tmp/vke | cut -d' ' -f1)
@@ -88,5 +87,4 @@ else
     message "New build $BUILD created $LAST_BUILD_DATE"
     message "  SHA256: $SHA256 → $SHA256_NEW"
     message "  Version: $VERSION → $VERSION_NEW"
-    exit 0
 fi
