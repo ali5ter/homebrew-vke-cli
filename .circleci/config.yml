@@ -24,14 +24,14 @@ jobs:
           name: Check for new build and update tap
           command: |
             echo "Last build date check before: $(cat .last_build_date)"
-            ./check_new_release
-            git config credential.helper 'cache --timeout=120'
-            git config user.email "alister@lewis-bowen.org"
-            git config user.name "CircleCI deployment job"
+            ./check_new_release -v
             if [[ $(git status -s | grep -c 'M vke-cli.rb') == 1 ]]; then
-                git add vke-cli.rb && \
-                git commit -m'Update tap for new build' && \
-                git push -q https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/homebrew-vke-cli.git master
+              git config credential.helper 'cache --timeout=120'
+              git config user.email "alister@lewis-bowen.org"
+              git config user.name "CircleCI deployment job"
+              git add vke-cli.rb && \
+              git commit -m'Update tap for new build' && \
+              git push -q https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/homebrew-vke-cli.git master
             fi
             echo "Last build date check after: $(cat .last_build_date)"
       - save_cache:
@@ -52,14 +52,14 @@ jobs:
           name: Create completion script and commit if there are changes
           working_directory: ${CIRCLE_WORKING_DIRECTORY}/vke-completion
           command: |
-            git config credential.helper 'cache --timeout=120'
-            git config user.email "alister@lewis-bowen.org"
-            git config user.name "CircleCI deployment job"
             ./create_completion
             if [[ $(git status -s | grep -c 'M vke_bash_completion.sh') == 1 ]]; then
-                git add vke_bash_completion.sh && \
-                git commit -m'Update completion for new CLI build' && \
-                git push -q https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/vke-completion.git master
+              git config credential.helper 'cache --timeout=120'
+              git config user.email "alister@lewis-bowen.org"
+              git config user.name "CircleCI deployment job"
+              git add vke_bash_completion.sh && \
+              git commit -m'Update completion for new CLI build' && \
+              git push -q https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/vke-completion.git master
             fi
 
 workflows:

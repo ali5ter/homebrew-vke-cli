@@ -10,6 +10,27 @@ SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 LAST_BUILD_FILE="$SCRIPT_PATH/.last_build_date"
 CLI_URL=''
 CMD_SHA256=''
+VERBOSE='n'
+
+help() {
+    echo "Update tap script if there is a new VKE CLI build"
+    echo
+    echo "Usage: chec_new_release [options]"
+    echo "Options:"
+    echo "  -h, --help, help .... displays this help information"
+    echo "  -v, --verbose ....... display informational messages"
+    return 0
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -v | --verbose )      VERBOSE='y'; shift;;
+        help | -h | --help )  help; exit 0;;
+        * ) shift ;;
+    esac
+done
+
+# Platform dependencies ------------------------------------------------------
 
 case "$OSTYPE" in
     darwin*)  
@@ -23,14 +44,25 @@ case "$OSTYPE" in
     *)  return 1;;
 esac
 
+# Helper functions -----------------------------------------------------------
+
 get_last_modified() { 
     curl -s -I "$CLI_URL" | grep Last-Modified | sed 's/Last-Modified: //'
 }
 
+message() {
+    [[ "$VERBOSE" == 'y' ]] && echo "$@"
+}
+
+# Check if we have anything to compare against -------------------------------
+
 if [[ ! -e "$LAST_BUILD_FILE" ]]; then
     get_last_modified > "$LAST_BUILD_FILE"
-    exit 0
+    message "Storing current build date: $(cat $LAST_BUILD_FILE)"
+    exit 1
 fi
+
+# Check for build update before updating tap ---------------------------------
 
 LAST_BUILD_DATE=$(cat "$LAST_BUILD_FILE")
 TAP_SCRIPT="$SCRIPT_PATH/vke-cli.rb"
@@ -38,7 +70,10 @@ SHA256=$(grep sha256 "$TAP_SCRIPT" | cut -d'"' -f 2)
 VERSION=$(grep version\  "$TAP_SCRIPT"  | cut -d'"' -f 2)
 
 if curl -s -I --header "If-Modified-Since: $LAST_BUILD_DATE" "$CLI_URL" | grep -q '304 Not Modified'; then
-    echo "No build since $LAST_BUILD_DATE"
+    message "No build since $LAST_BUILD_DATE"
+    message "  SHA256: $SHA256"
+    message "  Version: $VERSION"
+    exit 1
 else
     curl -s "$CLI_URL" -o /tmp/vke && chmod 755 /tmp/vke
     SHA256_NEW=$($CMD_SHA256 /tmp/vke | cut -d' ' -f1)
@@ -48,5 +83,8 @@ else
     sed -i.tmp -e "s/$SHA256/$SHA256_NEW/g" -- "$TAP_SCRIPT" && rm "${TAP_SCRIPT}.tmp"
     sed -i.tmp -e "s/$VERSION/$VERSION_NEW/g" -- "$TAP_SCRIPT" && rm "${TAP_SCRIPT}.tmp"
     get_last_modified > "$LAST_BUILD_FILE"
-    echo "New build $BUILD (checksum: $SHA256_NEW)"
+    message "New build $BUILD created $(cat $LAST_BUILD_FILE)"
+    message "  SHA256: $SHA256 → $SHA256_NEW"
+    message "  Version: $VERSION → $VERSION_NEW"
+    exit 0
 fi
