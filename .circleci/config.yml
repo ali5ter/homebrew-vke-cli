@@ -77,10 +77,7 @@ workflows:
             branches:
               only: master
     jobs:
-      - linter
       - update_tap_on_new_build:
-          requires:
-            - linter
       - build_completion_script:
           requires:
             - update_tap_on_new_build
