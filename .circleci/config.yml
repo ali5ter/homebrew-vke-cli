@@ -27,6 +27,13 @@ jobs:
             ./check_new_release -v
             unset DEBUG
             if [[ $(git status -s | grep -c 'M vke-cli.rb') == 1 ]]; then
+              pip install awscli --upgrade --user
+              ~/.local/bin/aws --output json --region us-east-1 \
+                ses send-email \
+                --from alister@lewis-bowen.org \
+                --to alister@different.com \
+                --subject "[CircleCI] New build found for vke" \
+                --text "automated email from build script"
               git config credential.helper 'cache --timeout=120'
               git config user.email "alister@lewis-bowen.org"
               git config user.name "CircleCI deployment job"
