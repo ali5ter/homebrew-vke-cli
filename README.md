@@ -1,4 +1,4 @@
-# VMware Kubernetes Engine CLI Homebrew Tap
+# VMware Cloud PKS (formerly VKE) CLI Homebrew Tap
 This is a [Homebrew](https://brew.sh/) tap for formulae installing the VMware Cloud PKS (formerly VKE) CLI on macOS.
 
 [![CircleCI](https://circleci.com/gh/ali5ter/homebrew-vke-cli.svg?style=svg)](https://circleci.com/gh/ali5ter/homebrew-vke-cli)
