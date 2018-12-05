@@ -70,6 +70,28 @@ jobs:
               git push -q https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/vke-completion.git master
             fi
 
+  create_taxo_graph:
+    docker:
+      - image: circleci/python:2.7
+    steps:
+      - run:
+          name: Clone completion script repo
+          working_directory: ${CIRCLE_WORKING_DIRECTORY}
+          command: |
+            git clone https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/vke-completion.git
+      - deploy:
+          name: Create taxo graph and commit if there are changes
+          working_directory: ${CIRCLE_WORKING_DIRECTORY}/vke-completion
+          command: |
+            ./create_taxo_graph
+            if [[ $(git status -s | grep -c 'M taxonomy/data.csv') == 1 ]]; then
+              git config credential.helper 'cache --timeout=120'
+              git config user.email "alister@lewis-bowen.org"
+              git config user.name "CircleCI deployment job"
+              git add taxonomy/data.csv && \
+              git commit -m'Update taxo graph for new CLI build' && \
+              git push -q https://${GITHUB_PERSONAL_TOKEN}@github.com/ali5ter/vke-completion.git master
+            fi
 workflows:
   version: 2
 
@@ -87,5 +109,8 @@ workflows:
     jobs:
       - update_tap_on_new_build
       - build_completion_script:
+          requires:
+            - update_tap_on_new_build
+      - create_taxo_graph:
           requires:
             - update_tap_on_new_build
