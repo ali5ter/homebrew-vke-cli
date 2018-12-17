@@ -60,6 +60,7 @@ jobs:
           name: Create completion script and commit if there are changes
           working_directory: ${CIRCLE_WORKING_DIRECTORY}/vke-completion
           command: |
+            git pull 
             ./create_completion
             if [[ $(git status -s | grep -c 'M vke_bash_completion.sh') == 1 ]]; then
               git config credential.helper 'cache --timeout=120'
@@ -83,6 +84,7 @@ jobs:
           name: Create taxo graph and commit if there are changes
           working_directory: ${CIRCLE_WORKING_DIRECTORY}/vke-completion
           command: |
+            git pull
             ./create_taxo_graph
             if [[ $(git status -s | grep -c 'M taxonomy/data.csv') == 1 ]]; then
               git config credential.helper 'cache --timeout=120'
