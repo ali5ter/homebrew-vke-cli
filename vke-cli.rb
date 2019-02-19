@@ -3,7 +3,7 @@ class VkeCli < Formula
   homepage "https://cloud.vmware.com/vmware-kubernetes-engine"
   url "https://s3-us-west-2.amazonaws.com/cascade-cli-download/pre-prod-us-west-2/latest/mac/vke"
   version "0.9.0.ci-0d3711c"
-  sha256 "2f45f17fa5d68b8acbf61ca029f44403e21a9abf1bd5462480c97c5b63b502cf"
+  sha256 "e066b17757761ada732c2e7a115c715b746736292e8ceaff71a118bbe664cfa6"
   version_scheme 1
 
   bottle :unneeded
