@@ -1,3 +1,5 @@
+> **⚠️ This project is archived and no longer maintained.**
+
 DEPRECATED
 
 # VMware Cloud PKS (formerly VKE) CLI Homebrew Tap
