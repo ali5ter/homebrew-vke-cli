@@ -1,7 +1,5 @@
 > **⚠️ Archived 2025-08-16. No longer maintained.**
 
-DEPRECATED
-
 # VMware Cloud PKS (formerly VKE) CLI Homebrew Tap
 This is a [Homebrew](https://brew.sh/) tap for formulae installing the VMware Cloud PKS (formerly VKE) CLI on macOS.
 
